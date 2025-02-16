@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ish Beruvchi Profili</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #34495e;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .form-container {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        button {
+            background-color: #2980b9;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1d6c8c;
+        }
+
+        .cancel {
+            background-color: #f44336;
+        }
+
+        .cancel:hover {
+            background-color: #e53935;
+        }
+
+        .section-content {
+            margin: 15px 0;
+        }
+
+        h2 {
+            color: #2980b9;
+        }
+
+        hr {
+            margin: 20px 0;
+        }
+
+        /* Profile Picture Container */
+        .profile-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-bottom: 30px;
+        }
+
+        .profile-picture-container {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            overflow: hidden;
+            border: 4px solid #3498db;
+            margin-bottom: 20px;
+            border-radius: 50%;
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .upload-button-container,
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        /* File upload input (hidden for style) */
+        #file-upload {
+            display: none;
+        }
+
+        .upload-button,
+        .update-button,
+        .delete-button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .upload-button:hover,
+        .update-button:hover,
+        .delete-button:hover {
+            background-color: #2980b9;
+        }
+
+        .delete-button {
+            background-color: #e74c3c;
+        }
+
+        .delete-button:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header -->
+    <header>
+        <h1>Ish Beruvchi Profili</h1>
+    </header>
+
+    <div style="text-align: right; margin-top: 20px;">
+        <form th:action="@{/employer-dashboard}">
+            <button type="submit">Dashboardga qaytish</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <section>
+        <h2>Profil Rasmi</h2>
+        <div class="profile-container">
+            <div class="profile-picture-container">
+                <!-- Display profile picture if exists, otherwise show upload button -->
+                <!-- <img th:src="@{'data:image/jpeg;base64,' + ${encodedImage}}" alt="Profil rasmi"
+                    th:if="${encodedImage != null}" class="profile-picture"
+                    onerror="this.src='path/to/default/image.jpg'" /> -->
+
+                <img th:if="${encodedImage != null}" th:src="@{'data:image/jpeg;base64,' + ${encodedImage}}"
+                    alt="Profil rasmi" class="profile-picture" />
+                <img th:if="${encodedImage == null}" th:src="@{/images/avatar/default-avatar.jpg}" alt="Default avatar"
+                    class="profile-picture" />
+            </div>
+
+            <!-- If no image is uploaded, show the 'Upload' button -->
+            <div class="upload-button-container" th:if="${encodedImage == null}">
+                <form th:action="@{/employer-dashboard/profile/upload-picture}" method="post"
+                    enctype="multipart/form-data">
+                    <label for="file-upload-new" class="upload-button">Yuklash</label>
+                    <input type="file" name="picture" accept="image/*" id="file-upload-new" style="display: none;">
+                    <button type="submit" class="upload-button">Yangilash</button>
+                </form>
+            </div>
+
+            <!-- If an image is uploaded, show the 'Update' and 'Delete' buttons -->
+            <div class="button-container" th:if="${encodedImage != null}">
+                <form th:action="@{/employer-dashboard/profile/upload-picture}" method="post"
+                    enctype="multipart/form-data">
+                    <label for="file-upload-update" class="update-button">Yuklash</label>
+                    <input type="file" name="picture" accept="image/*" id="file-upload-update" style="display: none;">
+                    <button type="submit" class="update-button">Yangilash</button>
+                </form>
+
+                <form th:action="@{/employer-dashboard/delete-picture}" method="post">
+                    <button type="submit" class="delete-button">Rasmi O'chirish</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <hr>
+
+    <!-- Profile Information Display -->
+    <section th:if="${editAbout != true}">
+        <h2>Profil Ma'lumotlari</h2>
+        <div class="section-content">
+            <p><strong>Ism:</strong> <span th:text="${user?.firstName ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Familiya:</strong> <span th:text="${user?.lastName ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Foydalanuvchi nomi:</strong> <span th:text="${user?.username ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Telefon raqam:</strong> <span th:text="${user?.phoneNumber ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Jinsi:</strong> <span th:text="${user?.gender ?: 'Maʼlumot yoʻq'}"></span></p>
+        </div>
+        <div class="form-container">
+            <form th:action="@{/employer-dashboard/profile}" method="get">
+                <button type="submit" name="editAbout" value="true">Maʼlumotlarni tahrirlash</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Editable Profile Section -->
+    <section th:if="${editAbout == true}">
+        <h2>Profilni Tahrirlash</h2>
+        <div class="form-container">
+            <form th:action="@{/employer-dashboard/update/about}" th:object="${user}" method="post">
+                <label for="firstName">Ism:</label>
+                <input type="text" th:field="*{firstName}" placeholder="Ismingizni kiriting" required><br>
+
+                <label for="lastName">Familiya:</label>
+                <input type="text" th:field="*{lastName}" placeholder="Familiyangizni kiriting" required><br>
+
+                <label for="username">Foydalanuvchi nomi:</label>
+                <input type="text" th:field="*{username}" placeholder="Foydalanuvchi nomini kiriting" required><br>
+
+                <label for="phoneNumber">Telefon raqami:</label>
+                <input type="text" th:field="*{phoneNumber}" placeholder="Telefon raqamingizni kiriting" required><br>
+
+                <label for="gender">Jins:</label>
+                <input type="text" th:field="*{gender}" placeholder="Jinsni kiriting" required><br>
+
+                <button type="submit">Oʻzgarishlarni saqlash</button>
+            </form>
+            <form th:action="@{/employer-dashboard/profile}" method="get" style="margin-top: 10px;">
+                <button type="submit" class="cancel">Bekor qilish</button>
+            </form>
+        </div>
+    </section>
+
+    <hr>
+    <!-- Employer's Job Information Section -->
+    <section th:if="${jobTable != null and edit != true}">
+        <h2>Ish malumotlari (shu yerda berilgan ma'lumot orqali xodimlar sizni topishlari mumkin)</h2>
+        <div class="section-content">
+            <p><strong>Ish nomi:</strong> <span th:text="${jobTable.jobName ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Kampaniya nomi:</strong> <span th:text="${jobTable.companyName ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Taʼrif:</strong> <span th:text="${jobTable.description ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Maosh:</strong> <span th:text="${jobTable.salary ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Tajriba:</strong> <span th:text="${jobTable.experience ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Jinsi:</strong> <span th:text="${jobTable.gender ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Yoshi:</strong> <span th:text="${jobTable.age ?: 'Maʼlumot yoʻq'}"></span></p>
+            <p><strong>Manzil:</strong> <span th:text="${jobTable.location ?: 'Maʼlumot yoʻq'}"></span></p>
+        </div>
+        <div class="form-container">
+            <form th:action="@{/employer-dashboard/profile}" method="get">
+                <button type="submit" name="edit" value="true">Tahrirlash</button>
+            </form>
+            <form th:action="@{/employer-dashboard/profile/delete}" method="post">
+                <input type="hidden" name="id" th:value="${jobTable.id ?: 0}">
+                <button type="submit" class="cancel">Ish haqidagi maʼlumotlarni oʻchirish</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Editable Job Information Section -->
+    <section th:if="${edit == true}">
+        <h2>Ish ma'lumotlarini tahrirlash</h2>
+        <div class="form-container">
+            <!-- Handle form action based on the presence of jobTable -->
+            <form
+                th:action="@{${jobTable.id == null ? '/employer-dashboard/profile' : '/employer-dashboard/profile/edit'}}"
+                th:object="${jobTable}" method="post">
+                <label for="jobName">Ish nomi:</label>
+                <input type="text" th:field="*{jobName}" placeholder="Ish nomini kiriting" required><br>
+
+                <label for="companyName">Ish nomi:</label>
+                <input type="text" th:field="*{companyName}" placeholder="Kompaniya nomini kiriting" required><br>
+
+                <label for="description">Taʼrif:</label>
+                <textarea th:field="*{description}" placeholder="Ish haqida qisqacha maʼlumot bering" rows="4"
+                    required></textarea><br>
+
+                <label for="salary">Maosh:</label>
+                <input type="text" th:field="*{salary}" placeholder="Kutilayotgan maoshni kiriting" required><br>
+
+                <label for="experience">tajriba:</label>
+                <input type="text" th:field="*{experience}" placeholder="Kutilayotgan tajribani kiriting" required><br>
+
+
+                <label for="gender">Jins:</label>
+                <select th:field="*{gender}" required>
+                    <option value="MALE" th:text="'Erkak'">Erkak</option>
+                    <option value="FEMALE" th:text="'Ayol'">Ayol</option>
+                    <option value="BOTH" th:text="'Har kim'">Ayol</option>
+                </select><br>
+
+                <label for="age">yoshi:</label>
+                <input type="text" th:field="*{age}" placeholder="Kutilayotgan shaxs yoshi" required><br>
+
+                <label for="location">Manzil:</label>
+                <input type="text" th:field="*{location}" placeholder="Manzilni kiriting" required><br>
+
+
+                <button type="submit"
+                    th:text="${jobTable == null ? 'E’lon qilish' : 'Oʻzgarishlarni saqlash'}"></button>
+            </form>
+
+            <!-- Cancel form with GET request to return to the profile page -->
+            <form th:action="@{/employer-dashboard/profile}" method="get" style="margin-top: 10px;">
+                <button type="submit" class="cancel">Bekor qilish</button>
+            </form>
+        </div>
+    </section>
+</body>
+
+</html>

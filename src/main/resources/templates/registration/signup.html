@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page - FindJob.com</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f1f1f1;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 3px solid #333;
+        }
+        h1 {
+            font-size: 36px;
+        }
+        p {
+            font-size: 18px;
+        }
+        main {
+            padding: 20px;
+            text-align: center;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            font-size: 18px;
+            margin-top: 10px;
+            display: block;
+        }
+        input[type="text"], input[type="password"], input[type="radio"] {
+            padding: 8px;
+            margin-top: 8px;
+            width: 100%;
+            margin-bottom: 15px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        button {
+            font-size: 18px;
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        footer {
+            margin-top: 20px;
+            font-size: 16px;
+            text-align: center;
+        }
+        footer a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Section -->
+    <header>
+        <h1>FindJob.com - Ro'yxatdan O'tish</h1>
+        <p>Quyidagi shaklni to'ldirib, hisobingizni yarating.</p>
+    </header>
+
+    <!-- Sign-Up Form -->
+    <main>
+        <form th:action="@{/signup}" th:object="${user}" method="post">
+
+            <div th:if="${message}">
+                <p th:text="${message}"></p>
+            </div>
+
+            <!-- First Name -->
+            <label for="firstName">Ismingiz:</label>
+            <input type="text" id="firstName" th:field="*{firstName}" required><br><br>
+
+            <!-- Last Name -->
+            <label for="lastName">Familya:</label>
+            <input type="text" id="lastName" th:field="*{lastName}" required><br><br>
+
+            <!-- Username -->
+            <label for="username">Foydalanuvchi nomi:</label>
+            <input type="text" id="username" th:field="*{username}" required><br><br>
+
+            <!-- Password -->
+            <label for="password">Parol:</label>
+            <input type="password" id="password" th:field="*{password}" required><br><br>
+
+            <label for="confimPassword">Parolni tasdiqlang:</label>
+            <input type="password" id="confimPassword" name="confirmPassword" required><br><br>
+
+            <!-- Phone Number -->
+            <label for="phoneNumber">Telefon raqami:</label>
+            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" placeholder="123-456-7890" required><br><br>
+
+            <!-- Gender -->
+            <label>Jinsingiz:</label>
+            <div>
+                <label><input type="radio" th:field="*{gender}" value="MALE" required> Erkak</label>
+                <label><input type="radio" th:field="*{gender}" value="FEMALE" required> Ayol</label>
+            </div>
+
+            <hr>
+
+            <!-- Role -->
+            <label>Siz kimsiz?</label>
+            <div>
+                <label><input type="radio" th:field="*{userIs}" value="EMPLOYER" required> Ish beruvchi</label>
+                <label><input type="radio" th:field="*{userIs}" value="EMPLOYEE" required> Ishchi</label>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit">Ro'yxatdan O'tish</button>
+        </form>
+
+        <footer>
+            <p>Allaqachon hisobingiz bormi? <a th:href="@{/login}">Kirish uchun bosing</a></p>
+        </footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xodim Profili</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f8fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #2d3e50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .button-container {
+            text-align: right;
+            padding: 10px 20px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        section {
+            max-width: 600px;
+            margin: 20px auto;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2d3e50;
+            font-size: 24px;
+        }
+
+        p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .profile-picture-container {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid #3498db;
+            margin: 20px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .info-group {
+            margin-top: 20px;
+        }
+
+        .info-group p {
+            margin: 5px 0;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #2d3e50;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Message Section -->
+    <div th:if="${message}" style="text-align: center; margin-top: 20px;">
+        <h2 th:text="${message}"></h2>
+    </div>
+
+    <!-- Dashboard Button -->
+    <div class="button-container">
+        <form th:action="@{/employer-dashboard}" method="get">
+            <button type="submit">Dashboardga qaytish</button>
+        </form>
+    </div>
+
+    <!-- User Profile Section -->
+    <section th:if="${user != null}">
+        <!-- <h2><span th:text="${user.firstName}"></span>'ning profili</h2> -->
+
+        <!-- Profile Picture -->
+        <div class="profile-picture-container">
+            <img th:if="${picture != null}" 
+                 th:src="@{'data:image/jpeg;base64,' + ${picture}}" 
+                 alt="Profil rasmi" 
+                 class="profile-picture" />
+            <img th:if="${picture == null}" 
+                 th:src="@{/images/avatar/default-avatar.jpg}" 
+                 alt="Default avatar" 
+                 class="profile-picture" />
+        </div>
+
+        <!-- User Info -->
+        <div class="info-group">
+            <p><span class="info-label">To'liq ismi:</span> 
+                <span th:text="${user.firstName} + ' ' + ${user.lastName}"></span>
+            </p>
+            <p><span class="info-label">Telefon raqami:</span> 
+                <span th:text="${user.phoneNumber}"></span>
+            </p>
+            <p><span class="info-label">Kasbi:</span> 
+                <span th:text="${user.getWorkTable().getWorkName()}"></span>
+            </p>
+        </div>
+    </section>
+</body>
+
+</html>

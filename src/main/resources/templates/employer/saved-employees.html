@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saqlangan xodimlar</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #34495e; /* Header color */
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .button-container {
+            text-align: right;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #2980b9; /* Button color */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1f6f8b; /* Darker shade for hover */
+        }
+        .delete {
+            background-color: #e74c3c; /* Red color for delete button */
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .delete:hover {
+            background-color: #c0392b; /* Darker red on hover */
+        }
+        section {
+            margin: 20px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #2d2e2d;
+        }
+        li {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        .employee-info {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <h1>Saqlangan Ishchilar</h1>
+        <div class="button-container">
+            <form th:action="@{/employer-dashboard}" method="get">
+                <button type="submit">Boshqaruv paneliga qaytish</button> <!-- Updated button -->
+            </form>
+        </div>
+    </header>
+
+    <!-- Saved Jobs List -->
+    <hr>
+    <section>
+        <h2>Saqlangan Ishchilar:</h2>
+        <div th:if="${savedEmployees != null and #lists.isEmpty(savedEmployees)}">
+            <p>Hozircha hech qanday ishchini saqlamadingiz. Izlashni va saqlashni boshlang!</p>
+        </div>
+        <div th:if="${savedEmployees != null and !#lists.isEmpty(savedEmployees)}">
+            <ul>
+                <li th:each="employee : ${savedEmployees}">
+                    <div class="employee-info">
+                        <p><strong>Lavozim:</strong> <span th:text="${employee.workName}"></span></p>
+                        <p><strong>Ta’rif:</strong> <span th:text="${employee.description}"></span></p>
+                        <p><strong>Maosh:</strong> <span th:text="${employee.salary}"></span></p>
+                        <p><strong>Telefon raqami:</strong> <span th:text="${employee.getEmployee().getPhoneNumber()}"></span></p>
+                        <p><strong>Joylashuv:</strong> <span th:text="${employee.location}"></span></p>
+                        <p><strong>Tajriba:</strong> <span th:text="${employee.experience}"></span></p>
+                    </div>
+                    <p>e'lon qilgan: <a th:href="@{/employees/{username} (username = ${employee.getEmployee().getUsername()})}">@<span th:text="${employee.getEmployee().getUsername()}"></span></a></p>
+
+                    <form th:action="@{/employer-dashboard/saved-employees/delete}" method="post">
+                        <input type="hidden" name="id" th:value="${employee.id}" />
+                        <button type="submit" class="delete">Saqlangan ishchini o'chirish</button> <!-- Red delete button -->
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </section>
+</body>
+</html>

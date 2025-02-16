@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xodim dashboardi</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #34495e;
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 2px solid #2c3e50;
+        }
+
+        h1 {
+            font-size: 36px;
+        }
+
+        section {
+            margin-top: 40px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .btn-container {
+            margin-top: 40px;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        input[type="text"], select {
+            margin: 10px;
+            padding: 12px;
+            font-size: 1rem;
+            border-radius: 25px;
+            border: 1px solid #bdc3c7;
+            width: 60%;
+            max-width: 400px;
+            transition: box-shadow 0.3s, border-color 0.3s;
+        }
+
+        input[type="text"]:focus, select:focus {
+            outline: none;
+            box-shadow: 0px 0px 8px rgba(41, 128, 185, 0.7);
+            border-color: #3498db;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 12px 30px;
+            background-color: #2980b9;
+            color: white;
+            border: 1px solid #2980b9;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s, border 0.3s;
+        }
+
+        button:hover {
+            background-color: #3498db;
+            border: 1px solid #3498db;
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0px 0px 5px rgba(52, 152, 219, 0.7);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #34495e;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            background-color: #ffffff;
+            margin: 10px auto;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+        }
+
+        li p {
+            margin: 5px 0;
+        }
+
+        li a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+
+        li a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Dashboardingizga Xush Kelibsiz</h1>
+        <div style="text-align: right; margin-top: 20px;">
+            <form th:action="@{/employee-dashboard/profile}" method="get" style="display: inline;">
+                <button type="submit">Profil</button>
+            </form>
+            <form th:action="@{/employee-dashboard/saved-jobs}" method="get" style="display: inline;">
+                <button type="submit">Saqlangan Ishlar</button>
+            </form>
+            
+            <form th:action=@{/logout} method="post" style="display: inline;">
+                <button type="submit" class="btn btn-danger" style="font-size: 16px; padding: 12px 30px; background-color: #e74c3c; color: white; border-radius: 25px; text-decoration: none; transition: background-color 0.3s;">
+                    Chiqish
+                </button>
+            </form>             
+        </div>
+    </header>
+
+    <hr>
+
+    <section class="btn-container">
+        <h2>Keyingi Ishingizni Toping</h2>
+        <form th:action="@{/employee-dashboard/search}" method="post">
+            <input type="text" id="jobSearch" name="jobTitle" placeholder="Ish nomi yoki kalit so'zlarni kiriting" required>
+            <select id="location" name="location">
+                <option value="">Hududni tanlang</option>
+                <option value="Toshkent">Toshkent</option>
+                <option value="Farg?ona">Farg?ona</option>
+                <option value="Samarqand">Samarqand</option>
+                <option value="Qashqadaryo">Qashqadaryo</option>
+                <option value="Andijan">Andijon</option>
+                <option value="Namangan">Namangan</option>
+                <option value="Surxondaryo">Surxondaryo</option>
+                <option value="Buxoro">Buxoro</option>
+                <option value="Xorazm">Xorazm</option>
+                <option value="Jizzax">Jizzax</option>
+                <option value="Navoiy">Navoiy</option>
+                <option value="Sirdaryo">Sirdaryo</option>
+            </select>
+            <button type="submit">Qidirish</button>
+        </form>
+        <div th:if="${message}">
+            <p th:text="${message}"></p>
+        </div>
+    </section>
+
+    <section th:if="${jobs != null}">
+        <h2>Ish E'lonlari</h2>
+        <div th:if="${#lists.isEmpty(jobs)}">
+            <p>Hech qanday ish topilmadi. Boshqa nom yoki kalit so'zni sinab ko'ring.</p>
+        </div>
+        <div th:if="${!#lists.isEmpty(jobs)}">
+            <ul>
+                <li th:each="job : ${jobs}">
+                    <p><strong>Nomi:</strong> <span th:text="${job.jobName}"></span></p>
+                    <p><strong>Tavsifi:</strong> <span th:text="${job.description}"></span></p>
+                    <p><strong>Maosh:</strong> <span th:text="${job.salary}"></span></p>
+                    <p><strong>Telefon Raqami:</strong> <span th:text="${job.getEmployer().getPhoneNumber()}"></span></p>
+                    <p><strong>Joylashuv:</strong> <span th:text="${job.getLocation()}"></span></p>
+                    <p>e'lon qilgan <a th:href="@{/employers/{username} (username = ${job.getEmployer().getUsername()})}">@<span th:text="${job.getEmployer().getUsername()}"></span></a></p>
+
+                    <form th:action="@{/employee-dashboard/save-jobs}" method="post">
+                        <input type="hidden" name="id" th:value="${job.id}" />
+                        <button type="submit">+ Ishni Saqlash</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </section>
+</body>
+</html>
